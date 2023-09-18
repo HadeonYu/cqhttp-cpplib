@@ -124,24 +124,15 @@ ListenMsg::ListenMsg(char *message) {
   const char *end = message + strlen(message);
   std::string jsonPart(start, end - start);
   body = json::parse(jsonPart);
-  std::string postTypeStr = body["post_type"].template get<std::string>();
-  postType += postTypeStr;
+  postType = body["post_type"].template get<std::string>();
   if (isValid()) {
     setInfo();
   }
 }
 
-ListenMsg::ListenMsg(const ListenMsg &cpy) {
-  postType = cpy.postType;
-  msgType = cpy.msgType;
-  copyFunc(cpy);
-}
+ListenMsg::ListenMsg(const ListenMsg &cpy) { copyFunc(cpy); }
 
-void ListenMsg::operator=(const ListenMsg &cpy) {
-  postType = cpy.postType;
-  msgType = cpy.msgType;
-  copyFunc(cpy);
-}
+void ListenMsg::operator=(const ListenMsg &cpy) { copyFunc(cpy); }
 
 std::ostream &operator<<(std::ostream &os, const ListenMsg &msg) {
   os << msg.body.dump(2);
@@ -149,6 +140,7 @@ std::ostream &operator<<(std::ostream &os, const ListenMsg &msg) {
 }
 
 void ListenMsg::setInfo() {
+  msgType = body["message_type"].template get<std::string>();
   subType = body["sub_type"].template get<std::string>();
   content = body["message"].template get<std::string>();
   senderName = body["sender"]["nickname"].template get<std::string>();
@@ -163,6 +155,8 @@ void ListenMsg::setInfo() {
 }
 
 void ListenMsg::copyFunc(const ListenMsg &cpy) {
+  postType = cpy.postType;
+  msgType = cpy.msgType;
   subType = cpy.subType;
   content = cpy.content;
   senderName = cpy.senderName;

@@ -64,15 +64,16 @@ int main() {
 编译并运行得到输出：
 ```bash
 example/build❯ ./example
-[2023-09-18 15:46:40.723] [Bot] [info] Bot Starting Up
-[2023-09-18 15:46:40.724] [Bot] [info] Post收到有效响应
+[2023-09-18 16:08:24.857] [Bot] [info] Bot Starting Up
+[2023-09-18 16:08:24.858] [Bot] [info] Post收到有效响应
 {
   "nickname": "Hadeon-qwen",
   "user_id": 2871416104
 }
-🤔
+[2023-09-18 16:08:49.013] [Bot] [info] 收到好友Hadeon的私聊消息：message receive example🤔
+message receive example🤔
 Hadeon
-[2023-09-18 15:47:45.776] [Bot] [info] Bot Shutting Down
+[2023-09-18 16:08:49.013] [Bot] [info] Bot Shutting Down
 ```
 
 ## 具体使用示例
