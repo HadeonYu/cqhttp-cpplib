@@ -21,7 +21,7 @@ Bot::Bot(const char *_ip, const uint32_t _listenPort, const uint32_t _postPort)
   setListen();
   // post端口设置
   setPost();
-  botLogger->info("Bot Start Up");
+  botLogger->info("Bot Starting Up");
 }
 
 Bot::~Bot() {
