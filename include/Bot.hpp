@@ -46,11 +46,28 @@ public: // TODO 默认构造函数，拷贝构造函数，赋值运算符重载
   ~Bot();
   ListenMsg *receive(); // 接受监听消息
 
-  // Bot账号api:
-  Response *getLoginInfo();                // 获取已登录的账号信息
-  Response *getModel(param params);        // 查询在线机型
-  Response *setModel(param params);        // 设置在线机型
-  Response *getOnlineClient(param params); // 获取账号在线客户端列表
+  //  Bot账号api:
+  Response *getLoginInfo(); // 获取已登录的账号信息
+  // 查询在线机型
+  Response *getModel(param params);
+  Response *getModel(const char *model);
+
+  // 设置在线机型
+  Response *setModel(param params);
+  Response *setModel(const char *model, const char *model_show);
+
+  // 设置登录号资料
+  Response *setProfile(param params);
+  Response *setProfile(const char *nickName, const char *company,
+                       const char *email, const char *college,
+                       const char *personal_note);
+
+  // 获取企点账号信息
+  Response *qidianAccountInfo();
+
+  // 获取账号在线客户端列表
+  Response *getOnlineClient(param params);
+  Response *getOnlineClient(const char *noCache);
 
   // 消息api:
   Response *sendPrivateMsg(param params);

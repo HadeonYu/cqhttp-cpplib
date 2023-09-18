@@ -155,14 +155,59 @@ Response *Bot::getModel(param params) {
   return postRequest(msg);
 }
 
+Response *Bot::getModel(const char *model) {
+  param params = {
+      {"model", model},
+  };
+  return getModel(params);
+}
+
 Response *Bot::setModel(param params) {
   std::string msg = msgPost.makeMsg("/_set_model_show", params);
+  return postRequest(msg);
+}
+
+Response *Bot::setModel(const char *model, const char *model_show) {
+  param params = {
+      {"model", model},
+      {"model_show", model_show},
+  };
+  return setModel(params);
+}
+
+Response *Bot::setProfile(param params) {
+  std::string msg = msgPost.makeMsg("/set_qq_profile", params);
+  return postRequest(msg);
+}
+
+Response *Bot::setProfile(const char *nickName, const char *company,
+                          const char *email, const char *college,
+                          const char *personalNote) {
+  param params = {
+      {"nickname", nickName},
+      {"company", company},
+      {"email", email},
+      {"college", college},
+      {"personal_note", personalNote},
+  };
+  return setProfile(params);
+}
+
+Response *Bot::qidianAccountInfo() {
+  std::string msg = msgPost.makeMsg("/qidian_get_account_info");
   return postRequest(msg);
 }
 
 Response *Bot::getOnlineClient(param params) {
   std::string msg = msgPost.makeMsg("/get_online_clients", params);
   return postRequest(msg);
+}
+
+Response *Bot::getOnlineClient(const char *noCache) {
+  param params = {
+      {"no_cache", noCache},
+  };
+  return getOnlineClient(params);
 }
 
 Response *Bot::sendPrivateMsg(param params) {

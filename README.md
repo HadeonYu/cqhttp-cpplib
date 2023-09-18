@@ -1,7 +1,7 @@
-## 项目介绍
-这是为go-cqhttp开发的第三方C++库，封装了Bot账号，好友信息等api。目前在ubuntu22.04下测试通过，其他平台目前未测试。
+# 项目介绍
+这是为 go-cqhttp 开发的第三方 C++ 库，封装了 Bot 账号，好友信息等 API。目前在 Ubuntu22.04 下测试通过，其他平台目前未测试。
 
-## 项目使用
+# 项目使用
 以CMake为例，假设项目目录结构如下:
 ```objectivec
 project example
@@ -28,7 +28,7 @@ set(SOURCES src/main.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-# 添加cqhttp-cpp-lib
+# 添加cqhttp-cpplib
 add_subdirectory(include/cqhttp-cpplib)
 target_link_libraries(${PROJECT_NAME} PRIVATE cqhttp-cpplib)
 ```
@@ -48,6 +48,7 @@ int main() {
   //获取登录账号的信息
   auto resp = myBot.getLoginInfo();
   // resp 类型为 Response*
+  
   if (resp->valid) {
     std::cout << *resp << std::endl;
   }
@@ -56,7 +57,9 @@ int main() {
   auto msg = myBot.receive(); // 阻塞，直到监听端口收到消息
   // msg 类型为 ListenMsg*
 
+  // 消息内容
   std::cout << msg->content << std::endl;
+  // 发送者昵称
   std::cout << msg->senderName << std::endl;
   return 0;
 }
@@ -76,15 +79,83 @@ Hadeon
 [2023-09-18 16:08:49.013] [Bot] [info] Bot Shutting Down
 ```
 
-## 具体使用示例
-### Bot账号
+# 具体使用示例
+封装的函数有两种传参方式：
 
-#### 1、获取登录账号的信息
+1. 通过json格式的param传参:
+ ```cpp
+cqhttp::param params = {
+  {"key1", "val1"},
+  {"key2", "val2"},
+  ...
+};
+myBot.postFunc(params);
+```
+2. 通过封装好的重载传参：
+```cpp
+myBot.postFunc(val1, val2, ...);
+```
+具体参数和返回参考go-cqhttp[帮助文档](https://docs.go-cqhttp.org/api)
+## Bot账号
+### 1、获取登录账号的信息
+(该API没有参数)
 ```cpp
 auto resp = myBot.getLoginInfo();
-if (resp->valid) {
-  std::cout << *resp << std::endl;
-}
 ```
+### 2、设置登录号资料
+```cpp
+  auto resp = 
+  myBot.setProfile("NickName", "company",     
+                   "hadeon@qq.com", "XJTU", 
+                    "a-qq-bot");
 
-……待完成
+  // 或者：
+  cqhttp::param params = {
+    {"nickname", "NickName"},      
+    {"company", "company"},
+    {"email", "hadeon@qq.com"},    
+    {"college", "XJTU"},
+    {"personal_note", "a-qq-bot"},
+  };
+  auto resp = myBot.setProfile(params);
+```
+### 3、获取企点账号信息
+（该API只有企点协议可用，无参数）
+```cpp
+  auto resp = myBot.qidianAccountInfo();
+```
+### 4、获取在线机型
+```cpp
+  auto resp = myBot.getModel("string-without-space");
+
+  // 或者：
+  cqhttp::param params = {
+      {"model", "string-without-space"},
+  };
+  auto resp = myBot.getModel(params);
+
+```
+### 5、设置在线机型
+```cpp
+  auto resp = myBot.setModel(
+    "string-without-space", 
+    "string-without-space"
+  );
+    
+  // 或者：
+  cqhttp::param params = {
+    {"model", "string-without-space"},
+    {"model_show", "string-without-space"},
+    };
+  auto resp = myBot.setModel(params);
+```
+### 6、获取当前账号在线客户端列表
+```cpp
+  auto resp = myBot.getOnlineClients("true");
+
+  // 或者：
+  cqhttp::param params = {
+      {"no_cache", "false"},
+  };
+  auto resp = myBot.getOnlineClient(params);
+```

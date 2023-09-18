@@ -7,6 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 set(SOURCES src/Bot.cpp src/Msg.cpp)
 
+# 生成动态库
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 add_subdirectory(include/json)
