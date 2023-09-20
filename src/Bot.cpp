@@ -203,11 +203,64 @@ Response *Bot::getOnlineClient(param params) {
   return postRequest(msg);
 }
 
-Response *Bot::getOnlineClient(const char *noCache) {
+Response *Bot::getOnlineClient(const char *noCache_str) {
   param params = {
-      {"no_cache", noCache},
+      {"no_cache", noCache_str},
   };
   return getOnlineClient(params);
+}
+
+Response *Bot::getAccountInfo(param params) {
+  std::string msg = msgPost.makeMsg("/get_stranger_info", params);
+  return postRequest(msg);
+}
+
+Response *Bot::getAccountInfo(const char *userID_str) {
+  param params = {
+      {"user_id", userID_str},
+      {"no_cache", "false"},
+  };
+  return getAccountInfo(params);
+}
+
+Response *Bot::getAccountInfo(const char *userID_str, const char *noCache_str) {
+  param params = {
+      {"user_id", userID_str},
+      {"no_cache", noCache_str},
+  };
+  return getAccountInfo(params);
+}
+
+Response *Bot::getFriendList() {
+  std::string msg = msgPost.makeMsg("/get_friend_list");
+  return postRequest(msg);
+}
+
+Response *Bot::getUnidrectionalList() {
+  std::string msg = msgPost.makeMsg("/get_unidirectional_friend_list");
+  return postRequest(msg);
+}
+
+Response *Bot::deleteFriend(param params) {
+  std::string msg = msgPost.makeMsg("/delete_friend", params);
+  return postRequest(msg);
+}
+Response *Bot::deleteFriend(const char *userID_str) {
+  param params = {
+      {"user_id", userID_str},
+  };
+  return deleteFriend(params);
+}
+
+Response *Bot::deleteUnidirectional(param params) {
+  std::string msg = msgPost.makeMsg("/delete_unidirectional_friend", params);
+  return postRequest(msg);
+}
+Response *Bot::deleteUnidirectional(const char *userID_str) {
+  param params = {
+      {"user_id", userID_str},
+  };
+  return deleteUnidirectional(params);
 }
 
 Response *Bot::sendPrivateMsg(param params) {

@@ -71,7 +71,7 @@ example/build❯ ./example
 [2023-09-18 16:08:24.858] [Bot] [info] Post收到有效响应
 {
   "nickname": "Hadeon-qwen",
-  "user_id": 2871416104
+  "user_id": 1234567890
 }
 [2023-09-18 16:08:49.013] [Bot] [info] 收到好友Hadeon的私聊消息：message receive example🤔
 message receive example🤔
@@ -91,10 +91,14 @@ cqhttp::param params = {
 };
 myBot.postFunc(params);
 ```
+``cqhttp::param`` 的本质是 ``nlohmann::json``，更多初始化和参数操作方式请参考项目[nlohmann/json](https://github.com/nlohmann/json)
+
 2. 通过封装好的重载传参：
 ```cpp
 myBot.postFunc(val1, val2, ...);
 ```
+**⚠️⚠️⚠️ 注意： 所有参数类型必须是 ``const char*``, 且不能带空格！！！**
+
 具体参数和返回参考go-cqhttp[帮助文档](https://docs.go-cqhttp.org/api)
 ## Bot账号
 ### 1、获取登录账号的信息
@@ -158,4 +162,54 @@ auto resp = myBot.getLoginInfo();
       {"no_cache", "false"},
   };
   auto resp = myBot.getOnlineClient(params);
+```
+
+## 好友信息
+### 1、获取账号信息
+```cpp
+  auto resp = myBot.getAccountInfo("1234567890", "true");
+  
+  // 或者：
+  auto resp = myBot.getAccountInfo("1234567890");
+
+  // 或者：
+  cqhttp::param params = {
+      {"user_id", "1234567890"},
+      {"no_cache", "false"},
+  };
+  auto resp = myBot.getAccountInfo(params);
+```
+
+### 2、获取好友列表
+（该API没有参数）
+```cpp
+  auto resp = myBot.getFriendList();
+```
+
+### 3、获取单向好友列表
+(该API没有参数)
+```cpp
+  auto resp = myBot.getUnidrectionalList();
+```
+
+### 4、删除好友
+```cpp
+  auto resp = myBot.deleteFriend("1234567890");
+  
+  // 或者：
+  cqhttp::param params = {
+      {"user_id", "1234567890"},
+  };
+  auto resp = myBot.deleteFriend(params);
+```
+
+### 5、删除单向好友
+```cpp
+  auto resp = myBot.deleteUnidrectional("1234567890");
+  
+  // 或者：
+  cqhttp::param params = {
+      {"user_id", "1234567890"},
+  };
+  auto resp = myBot.deleteUnidrectional(params);
 ```
