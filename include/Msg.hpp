@@ -10,7 +10,9 @@
 using json = nlohmann::json;
 
 namespace cqhttp {
-using param = json;
+
+using param = nlohmann::json;
+
 class MsgPost { // 用于POST的消息
 private:
   std::string postTemplate;

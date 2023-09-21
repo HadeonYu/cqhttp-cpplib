@@ -2,6 +2,7 @@
 #include "Msg.hpp"
 #include <algorithm>
 #include <cstring>
+#include <netinet/in.h>
 #include <string>
 
 namespace cqhttp {
@@ -44,7 +45,7 @@ void Bot::setListen() {
 
   struct sockaddr_in serverSoc;
   serverSoc.sin_family = AF_INET;
-  serverSoc.sin_addr.s_addr = inet_addr(ip);
+  serverSoc.sin_addr.s_addr = INADDR_ANY;
   serverSoc.sin_port = htons(listenPort);
   if (bind(listenSock, (struct sockaddr *)&serverSoc, sizeof(serverSoc)) ==
       -1) {
@@ -87,18 +88,17 @@ Response *Bot::postRequest(std::string postMsg) {
     botLogger->error("Error to Get Response:{}", strerror(errno));
   }
   Response *resp = new Response(buffer);
-  valid(resp);
+  printValid(resp);
   return resp;
 }
 
-void Bot::valid(Response *resp) {
-  std::string status = resp->body["status"];
-  if (resp->statusCode == 200 && !strcmp(status.c_str(), "ok")) {
+void Bot::printValid(Response *resp) {
+  if (resp->valid) {
     botLogger->info("Post收到有效响应");
   } else {
     botLogger->warn(
-        "Post收到无效响应\n响应状态：{}；http状态码：{}；错误信息：{}", status,
-        resp->statusCode, resp->body["message"].dump());
+        "Post收到无效响应\n响应状态：{}；http状态码：{}；错误信息：{}",
+        resp->statusCode, resp->statusCode, resp->body["message"].dump());
   }
 }
 
@@ -155,7 +155,7 @@ Response *Bot::getModel(param params) {
   return postRequest(msg);
 }
 
-Response *Bot::getModel(const char *model) {
+Response *Bot::getModel(value_t model) {
   param params = {
       {"model", model},
   };
@@ -167,7 +167,7 @@ Response *Bot::setModel(param params) {
   return postRequest(msg);
 }
 
-Response *Bot::setModel(const char *model, const char *model_show) {
+Response *Bot::setModel(value_t model, value_t model_show) {
   param params = {
       {"model", model},
       {"model_show", model_show},
@@ -180,9 +180,8 @@ Response *Bot::setProfile(param params) {
   return postRequest(msg);
 }
 
-Response *Bot::setProfile(const char *nickName, const char *company,
-                          const char *email, const char *college,
-                          const char *personalNote) {
+Response *Bot::setProfile(value_t nickName, value_t company, value_t email,
+                          value_t college, value_t personalNote) {
   param params = {
       {"nickname", nickName},
       {"company", company},
@@ -203,7 +202,7 @@ Response *Bot::getOnlineClient(param params) {
   return postRequest(msg);
 }
 
-Response *Bot::getOnlineClient(const char *noCache_str) {
+Response *Bot::getOnlineClient(value_t noCache_str) {
   param params = {
       {"no_cache", noCache_str},
   };
@@ -215,17 +214,17 @@ Response *Bot::getAccountInfo(param params) {
   return postRequest(msg);
 }
 
-Response *Bot::getAccountInfo(const char *userID_str) {
+Response *Bot::getAccountInfo(value_t userId_str) {
   param params = {
-      {"user_id", userID_str},
+      {"user_id", userId_str},
       {"no_cache", "false"},
   };
   return getAccountInfo(params);
 }
 
-Response *Bot::getAccountInfo(const char *userID_str, const char *noCache_str) {
+Response *Bot::getAccountInfo(value_t userId_str, value_t noCache_str) {
   param params = {
-      {"user_id", userID_str},
+      {"user_id", userId_str},
       {"no_cache", noCache_str},
   };
   return getAccountInfo(params);
@@ -245,9 +244,9 @@ Response *Bot::deleteFriend(param params) {
   std::string msg = msgPost.makeMsg("/delete_friend", params);
   return postRequest(msg);
 }
-Response *Bot::deleteFriend(const char *userID_str) {
+Response *Bot::deleteFriend(value_t userId_str) {
   param params = {
-      {"user_id", userID_str},
+      {"user_id", userId_str},
   };
   return deleteFriend(params);
 }
@@ -256,9 +255,9 @@ Response *Bot::deleteUnidirectional(param params) {
   std::string msg = msgPost.makeMsg("/delete_unidirectional_friend", params);
   return postRequest(msg);
 }
-Response *Bot::deleteUnidirectional(const char *userID_str) {
+Response *Bot::deleteUnidirectional(value_t userId_str) {
   param params = {
-      {"user_id", userID_str},
+      {"user_id", userId_str},
   };
   return deleteUnidirectional(params);
 }
@@ -266,6 +265,14 @@ Response *Bot::deleteUnidirectional(const char *userID_str) {
 Response *Bot::sendPrivateMsg(param params) {
   std::string msg = msgPost.makeMsg("/send_private_msg", params);
   return postRequest(msg);
+}
+
+Response *Bot::sendPrivateMsg(value_t userId_str, value_t message) {
+  param params = {
+      {"user_id", userId_str},
+      {"message", message},
+  };
+  return sendPrivateMsg(params);
 }
 
 } // namespace cqhttp

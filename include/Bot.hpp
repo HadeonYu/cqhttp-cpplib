@@ -17,6 +17,9 @@ using spdlog::sinks::stdout_color_sink_st;
 using std::make_shared;
 
 namespace cqhttp {
+
+using value_t = std::string;
+
 class Bot {
 private:
   char *ip;            // 项目所在的ip
@@ -39,7 +42,7 @@ private:
   void setListen();                           // 设置监听socket
   void setPost();                             // 设置发送socket
   Response *postRequest(std::string postMsg); // 发送请求
-  void valid(Response *resp); // 输出请求得到的响应的有效情况
+  void printValid(Response *resp); // 输出请求得到的响应的有效情况
 public: // TODO 默认构造函数，拷贝构造函数，赋值运算符重载
   Bot(const char *_ip, const uint32_t _listenPort,
       const uint32_t _postPort); // ip地址，监听端口，发送端口
@@ -50,30 +53,33 @@ public: // TODO 默认构造函数，拷贝构造函数，赋值运算符重载
   Response *getLoginInfo(); // 获取已登录的账号信息
   // 查询在线机型
   Response *getModel(param params);
-  Response *getModel(const char *model);
+  Response *getModel(value_t model);
 
   // 设置在线机型
   Response *setModel(param params);
-  Response *setModel(const char *model, const char *model_show);
+  Response *setModel(value_t model, value_t model_show);
 
   // 设置登录号资料
   Response *setProfile(param params);
-  Response *setProfile(const char *nickName, const char *company,
-                       const char *email, const char *college,
-                       const char *personalNote);
+  Response *setProfile(value_t nickName, value_t company, value_t email,
+                       value_t college, value_t personalNote);
 
   // 获取企点账号信息
   Response *qidianAccountInfo();
 
   // 获取账号在线客户端列表
   Response *getOnlineClient(param params);
-  Response *getOnlineClient(const char *noCache_str);
+  Response *getOnlineClient(value_t noCache_str);
 
   // 好友信息api:
   // 获取账号信息
+  /* go-cqhttp的帮助文档中
+   * 这个api的作用是获取陌生人信息
+   * 但是我测试时发现也可以获取好友信息
+   */
   Response *getAccountInfo(param params);
-  Response *getAccountInfo(const char *userID_str);
-  Response *getAccountInfo(const char *userID_str, const char *noCache_str);
+  Response *getAccountInfo(value_t userId_str);
+  Response *getAccountInfo(value_t userId_str, value_t noCache_str);
 
   // 获取好友列表
   Response *getFriendList();
@@ -84,13 +90,17 @@ public: // TODO 默认构造函数，拷贝构造函数，赋值运算符重载
   // 好友操作api:
   //  删除好友
   Response *deleteFriend(param params);
-  Response *deleteFriend(const char *userID_str);
+  Response *deleteFriend(value_t userId_str);
 
   // 删除单项好友
   Response *deleteUnidirectional(param params);
-  Response *deleteUnidirectional(const char *userID_str);
+  Response *deleteUnidirectional(value_t userId_str);
 
   // 消息api:
+  // 发送私聊消息
   Response *sendPrivateMsg(param params);
+  Response *sendPrivateMsg(value_t userId_str, value_t message);
+  Response *sendPrivateMsg(value_t userId_str, value_t groupId_str,
+                           value_t message);
 };
 } // namespace cqhttp
