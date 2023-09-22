@@ -95,9 +95,12 @@ myBot.postFunc(params);
 
 2. 通过封装好的重载传参：
 ```cpp
+cqhttp::value_t val1 = "value1";
+cqhttp::value_t val2 = "value2";
+...
 myBot.postFunc(val1, val2, ...);
 ```
-**⚠️⚠️⚠️ 注意： 所有参数类型必须是 ``const char*``, 且不能带空格！！！**
+**⚠️⚠️⚠️ 注意： 不论哪种方法，所有参数必须是字符串格式！！！**
 
 具体参数和返回参考go-cqhttp[帮助文档](https://docs.go-cqhttp.org/api)
 ## Bot账号
@@ -212,4 +215,17 @@ auto resp = myBot.getLoginInfo();
       {"user_id", "1234567890"},
   };
   auto resp = myBot.deleteUnidrectional(params);
+```
+## 消息
+### 1、发送私聊消息
+```cpp
+  cqhttp::value_t id = "1234567890", message = "a message";
+  auto resp = myBot.sendPrivateMsg(id, message);
+  
+  // 或者：
+  cqhttp::param params = {
+      {"user_id", "1234567890"},
+      {"message", "a message"},
+  };
+  auto resp = myBot.sendPrivateMsg(params);
 ```

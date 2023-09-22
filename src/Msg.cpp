@@ -1,7 +1,4 @@
 #include "Msg.hpp"
-#include "fmt/core.h"
-#include <ostream>
-#include <string>
 
 namespace cqhttp {
 
@@ -25,6 +22,19 @@ MsgPost::MsgPost(const MsgPost &cpy)
   strcpy(ip, cpy.ip);
 }
 
+void MsgPost::specialCharHandle(std::string &str) {
+  std::unordered_map<std::string, std::string> specialChars{
+      {" ", "%20"}, {"+", "%2B"}, {"/", "%2F"}, {"?", "%3F"},
+      {"%", "%25"}, {"#", "%23"}, {"&", "%26"}, {"=", "%3D"}};
+  for (auto iter = specialChars.begin(); iter != specialChars.end(); iter++) {
+    size_t pos = 0;
+    while ((pos = str.find(iter->first, pos)) != std::string::npos) {
+      str.replace(pos, iter->first.length(), iter->second);
+      pos += iter->first.length();
+    }
+  }
+}
+
 void MsgPost::operator=(const MsgPost &cpy) {
   ip = new char[strlen(cpy.ip)];
   strcpy((char *)ip, cpy.ip);
@@ -44,7 +54,9 @@ std::string MsgPost::makeMsg(const char *endpoint, param params) {
   std::string endpWithParam(endpoint);
   endpWithParam += "?";
   for (auto &[key, value] : params.items()) {
-    endpWithParam += (key + "=" + value.template get<std::string>() + "&");
+    std::string handledVal = value.template get<std::string>();
+    specialCharHandle(handledVal);
+    endpWithParam += (key + "=" + handledVal + "&");
   }
   endpWithParam.pop_back(); // 删去最后一个多余的'&'
   std::string request =

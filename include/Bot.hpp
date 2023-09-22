@@ -6,10 +6,7 @@
 #include <arpa/inet.h>
 #include <deque>
 #include <memory>
-#include <netinet/in.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <sys/socket.h>
-#include <sys/types.h>
 
 using spdlog::logger;
 using spdlog::set_level;

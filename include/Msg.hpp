@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <ostream>
 #include <string>
+#include <unordered_map>
 
 using json = nlohmann::json;
 
@@ -18,6 +19,7 @@ private:
   std::string postTemplate;
   char *ip;
   uint32_t postPort;
+  void specialCharHandle(std::string &str);
 
 public:
   MsgPost(); // 用于post的消息
