@@ -1,17 +1,19 @@
 #pragma once
 
 #include "Msg.hpp"
+#include "fmt/core.h"
 #include "spdlog/spdlog.h"
-#include <algorithm>
 #include <arpa/inet.h>
 #include <deque>
-#include <memory>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 using spdlog::logger;
 using spdlog::set_level;
 using spdlog::sinks::stdout_color_sink_st;
 using std::make_shared;
+
+#define PRIVATE_MSG "private"
+#define GROUP_MSG "group"
 
 namespace cqhttp {
 
@@ -99,5 +101,31 @@ public: // TODO 默认构造函数，拷贝构造函数，赋值运算符重载
   Response *sendPrivateMsg(value_t userId_str, value_t message);
   Response *sendPrivateMsg(value_t userId_str, value_t groupId_str,
                            value_t message);
+
+  // 发送群聊消息
+  Response *sendGroupMsg(param params);
+  Response *sendGroupMsg(value_t groupId_str, value_t message);
+
+  // 发送消息
+  Response *sendMsg(param params);
+  Response *sendMsg(value_t msgType, value_t id_str, value_t message);
+
+  // 获取消息信息
+  Response *getMsgInfo(param params);
+  Response *getMsgInfo(value_t msgId_str);
+
+  // 撤回消息
+  Response *deleteMsg(param params);
+  Response *deleteMsg(value_t msgId_str);
+
+  // 标记消息已读
+  Response *markMsgRead(param params);
+  Response *markMsgRead(value_t msgId_str);
+
+  // TODO 合并转发
+
+  // 获取群消息历史记录
+  Response *getGroupHistoryMsg(param params);
+  Response *getGroupHistoryMsg(value_t msgId_str, value_t groupId_str);
 };
 } // namespace cqhttp

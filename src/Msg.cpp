@@ -66,6 +66,13 @@ std::string MsgPost::makeMsg(const char *endpoint, param params) {
 
 // Response类：
 
+Response::Response() {
+  rawMsg = nullptr;
+  statusCode = 400;
+  body = nullptr;
+  valid = false;
+}
+
 Response::Response(char *message) : rawMsg(message) {
   getStatus();
   if (statusCode == 200) {
@@ -78,7 +85,8 @@ Response::Response(char *message) : rawMsg(message) {
     }
     std::string jsonPart(start, end - start + 1);
     body = json::parse(jsonPart);
-    if (body["data"].is_null()) {
+    data = body["data"];
+    if (strcmp(body["status"].template get<std::string>().c_str(), "ok")) {
       valid = false;
     } else {
       valid = true;
@@ -99,13 +107,14 @@ Response::Response(char *message) : rawMsg(message) {
   }
 }
 
-Response::Response(const Response &cpy) : body(cpy.body) {
+Response::Response(const Response &cpy) : body(cpy.body), data(cpy.data) {
   rawMsg = new char[strlen(cpy.rawMsg)];
   strcpy(rawMsg, cpy.rawMsg);
 }
 
 void Response::operator=(const Response &cpy) {
   body = cpy.body;
+  data = cpy.data;
   rawMsg = new char[strlen(cpy.rawMsg)];
   strcpy(rawMsg, cpy.rawMsg);
 }
@@ -157,6 +166,7 @@ void ListenMsg::setInfo() {
   content = body["message"].template get<std::string>();
   senderName = body["sender"]["nickname"].template get<std::string>();
   msgId = body["message_id"].template get<uint32_t>();
+  msgId_str = std::to_string(msgId);
   userId = body["user_id"].template get<int64_t>();
   time = body["time"].template get<int64_t>();
   if (!strcmp(msgType.c_str(), "group")) {
@@ -173,6 +183,7 @@ void ListenMsg::copyFunc(const ListenMsg &cpy) {
   content = cpy.content;
   senderName = cpy.senderName;
   msgId = cpy.msgId;
+  msgId_str = cpy.msgId_str;
   userId = cpy.userId;
   time = cpy.time;
   groupId = cpy.groupId;

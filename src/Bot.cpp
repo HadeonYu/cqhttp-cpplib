@@ -1,8 +1,5 @@
 #include "Bot.hpp"
 #include "Msg.hpp"
-#include <algorithm>
-#include <cstring>
-#include <netinet/in.h>
 #include <string>
 
 namespace cqhttp {
@@ -96,9 +93,8 @@ void Bot::printValid(Response *resp) {
   if (resp->valid) {
     botLogger->info("Post收到有效响应");
   } else {
-    botLogger->warn(
-        "Post收到无效响应\n响应状态：{}；http状态码：{}；错误信息：{}",
-        resp->statusCode, resp->statusCode, resp->body["message"].dump());
+    botLogger->warn("Post收到无效响应\nhttp状态码：{}；错误信息：{}",
+                    resp->statusCode, resp->body["message"].dump());
   }
 }
 
@@ -275,4 +271,91 @@ Response *Bot::sendPrivateMsg(value_t userId_str, value_t message) {
   return sendPrivateMsg(params);
 }
 
+Response *Bot::sendPrivateMsg(value_t userId_str, value_t groupId_str,
+                              value_t message) {
+  param params = {
+      {"user_id", userId_str},
+      {"group_id", groupId_str},
+      {"message", message},
+  };
+  return sendPrivateMsg(params);
+}
+
+Response *Bot::sendGroupMsg(param params) {
+  std::string msg = msgPost.makeMsg("/send_group_msg", params);
+  return postRequest(msg);
+}
+Response *Bot::sendGroupMsg(value_t groupId_str, value_t message) {
+  param params = {
+      {"group_id", groupId_str},
+      {"message", message},
+  };
+  return sendGroupMsg(params);
+}
+
+Response *Bot::sendMsg(param params) {
+  std::string msg = msgPost.makeMsg("/send_msg", params);
+  return postRequest(msg);
+}
+Response *Bot::sendMsg(value_t msgType, value_t id_str, value_t message) {
+  param params = {
+      {"message_type", msgType},
+      {"message", message},
+  };
+  if (!strcmp(msgType.c_str(), "private")) {
+    params["user_id"] = id_str;
+  } else if (!strcmp(msgType.c_str(), "group")) {
+    params["group_id"] = id_str;
+  } else {
+    botLogger->warn("消息类型错误！");
+    Response *resp = new Response();
+    return resp;
+  }
+  return sendMsg(params);
+}
+
+Response *Bot::getMsgInfo(param params) {
+  std::string msg = msgPost.makeMsg("/get_msg", params);
+  return postRequest(msg);
+}
+Response *Bot::getMsgInfo(value_t msgId_str) {
+  param params = {
+      {"message_id", msgId_str},
+  };
+  return getMsgInfo(params);
+}
+
+Response *Bot::deleteMsg(param params) {
+  std::string msg = msgPost.makeMsg("/delete_msg", params);
+  return postRequest(msg);
+}
+Response *Bot::deleteMsg(value_t msgId_str) {
+  param params = {
+      {"message_id", msgId_str},
+  };
+  return deleteMsg(params);
+}
+
+Response *Bot::markMsgRead(param params) {
+  std::string msg = msgPost.makeMsg("/mark_msg_as_read", params);
+  return postRequest(msg);
+}
+Response *Bot::markMsgRead(value_t msgId_str) {
+  param params = {
+      {"message_id", msgId_str},
+  };
+  return markMsgRead(params);
+}
+
+Response *Bot::getGroupHistoryMsg(param params) {
+  std::string msg = msgPost.makeMsg("/get_group_msg_history", params);
+  return postRequest(msg);
+}
+Response *Bot::getGroupHistoryMsg(value_t msgId_str, value_t groupId_str) {
+  param params = {
+      {"message_id", msgId_str},
+      {"group_id", groupId_str},
+  };
+  return getGroupHistoryMsg(params);
+}
 } // namespace cqhttp

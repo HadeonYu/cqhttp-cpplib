@@ -39,8 +39,10 @@ private:
 
 public:
   json body;      // 处理得到的json格式信息
+  json data;      // body["data"]
   int statusCode; // 状态码
   bool valid;     // 消息是否有效
+  Response();
   Response(char *message);
   Response(const Response &cpy);
   ~Response();
@@ -67,6 +69,7 @@ public:
   std::string subType;    // 消息子类型
   std::string content;    // 消息内容
   std::string senderName; // 发送者昵称
+  std::string msgId_str;  // 字符串形式的消息id
   uint32_t msgId;         // 消息id
   int64_t userId;         // 发送者qq号，私聊群聊都有
   int64_t time;           // 消息的时间戳
